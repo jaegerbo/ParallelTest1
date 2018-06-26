@@ -28,6 +28,7 @@ Partial Class Form1
       Me.btnCancel = New Infragistics.Win.Misc.UltraButton()
       Me.btnStart2 = New Infragistics.Win.Misc.UltraButton()
       Me.btnStart3 = New Infragistics.Win.Misc.UltraButton()
+      Me.btnStart2MitReturn = New Infragistics.Win.Misc.UltraButton()
       Me.SuspendLayout()
       '
       'btnStart1
@@ -68,21 +69,30 @@ Partial Class Form1
       Me.btnStart2.Name = "btnStart2"
       Me.btnStart2.Size = New System.Drawing.Size(191, 49)
       Me.btnStart2.TabIndex = 3
-      Me.btnStart2.Text = "Start 2"
+      Me.btnStart2.Text = "Start 2 (abbrechbar)"
       '
       'btnStart3
       '
-      Me.btnStart3.Location = New System.Drawing.Point(27, 204)
+      Me.btnStart3.Location = New System.Drawing.Point(27, 282)
       Me.btnStart3.Name = "btnStart3"
       Me.btnStart3.Size = New System.Drawing.Size(191, 49)
       Me.btnStart3.TabIndex = 4
-      Me.btnStart3.Text = "Start 3"
+      Me.btnStart3.Text = "Start 3 (mit Zwischenstatus)"
+      '
+      'btnStart2MitReturn
+      '
+      Me.btnStart2MitReturn.Location = New System.Drawing.Point(27, 195)
+      Me.btnStart2MitReturn.Name = "btnStart2MitReturn"
+      Me.btnStart2MitReturn.Size = New System.Drawing.Size(191, 49)
+      Me.btnStart2MitReturn.TabIndex = 5
+      Me.btnStart2MitReturn.Text = "Start 2 (abbrechbar mit Return)"
       '
       'Form1
       '
       Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
       Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
       Me.ClientSize = New System.Drawing.Size(1048, 568)
+      Me.Controls.Add(Me.btnStart2MitReturn)
       Me.Controls.Add(Me.btnStart3)
       Me.Controls.Add(Me.btnStart2)
       Me.Controls.Add(Me.btnCancel)
@@ -99,4 +109,5 @@ Partial Class Form1
    Friend WithEvents btnCancel As Infragistics.Win.Misc.UltraButton
    Friend WithEvents btnStart2 As Infragistics.Win.Misc.UltraButton
    Friend WithEvents btnStart3 As Infragistics.Win.Misc.UltraButton
+   Friend WithEvents btnStart2MitReturn As Infragistics.Win.Misc.UltraButton
 End Class

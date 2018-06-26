@@ -79,7 +79,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="clsRunUiAsync.vb" />
+    <Compile Include="clsAsync.vb" />
     <Compile Include="clsRunUiAsync2.vb" />
     <Compile Include="Form1.vb">
       <SubType>Form</SubType>

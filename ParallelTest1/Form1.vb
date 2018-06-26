@@ -8,9 +8,9 @@ Public Class Form1
    Private _tokenSource As New CancellationTokenSource
    Private _cancelationtoken As CancellationToken = Nothing
 
-   Private Sub UltraButton1_Click(sender As Object, e As EventArgs) Handles btnStart1.Click
+   Private Sub btnStart1_Click(sender As Object, e As EventArgs) Handles btnStart1.Click
       Try
-         _Task = clsRunUiAsync.Run(lblOk, Sub() Test3(), True)
+         clsAsync.Run(lblOk, Sub() Test1(4), "wird geladen")
       Catch ex As Exception
          Stop
       End Try
@@ -18,9 +18,24 @@ Public Class Form1
 
    Private Sub btnStart2_Click(sender As Object, e As EventArgs) Handles btnStart2.Click
       Try
+         Debug.WriteLine($"Start2 gestartet um {Now.ToLongTimeString}")
+         _tokenSource.Cancel()
+         _tokenSource = New CancellationTokenSource
+         _cancelationtoken = Nothing
          _cancelationtoken = _tokenSource.Token
 
-         _Task = clsRunUiAsync.RunTest4(lblOk, 4000000, _tokenSource.Token, True)
+         clsAsync.RunWithCancelation(lblOk, 5, _cancelationtoken, $"wird geladen {Now.ToLongTimeString}")
+      Catch ex As Exception
+         Stop
+      End Try
+      Debug.WriteLine($"Start2 beendet um {Now.ToLongTimeString}")
+   End Sub
+   Private Sub btnStart2MitReturn_Click(sender As Object, e As EventArgs) Handles btnStart2MitReturn.Click
+      Try
+         _tokenSource.Cancel()
+         _cancelationtoken = _tokenSource.Token
+
+         clsAsync.RunWithCancelationAndReturn(lblOk, 5, _cancelationtoken, "wird geladen")
       Catch ex As Exception
          Stop
       End Try
@@ -28,9 +43,10 @@ Public Class Form1
 
    Private Sub btnStart3_Click(sender As Object, e As EventArgs) Handles btnStart3.Click
       Try
+         _tokenSource.Cancel()
          _cancelationtoken = _tokenSource.Token
 
-         _Task = clsRunUiAsync.RunTest5(lblOk, 4000000, _tokenSource.Token, True)
+         _Task = clsAsync.RunTest5(lblOk, 4000000, _tokenSource.Token, True)
       Catch ex As Exception
          Stop
       End Try
@@ -38,29 +54,11 @@ Public Class Form1
 
    Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
       Try
-         If _Task IsNot Nothing AndAlso _Task.IsCompleted = False Then
-            _tokenSource.Cancel()
-         End If
+         Debug.WriteLine($"aktueller Prozess gecancelt um {Now.ToLongTimeString}")
+         _tokenSource.Cancel()
       Catch ex As Exception
          Stop
       End Try
    End Sub
-
-   'Public Sub updateUi(i As Integer)
-   '   Try
-   '      Dim timeNow As DateTime = DateTime.Now
-
-   '      If (DateTime.Now - _previousTime).Milliseconds <= 50 Then
-   '         Exit Sub
-   '      End If
-
-   '      _sc.Post(New SendOrPostCallback(Sub()
-   '                                         lblOk.Text = i.ToString
-   '                                      End Sub), Nothing)
-   '      _previousTime = DateTime.Now
-   '   Catch ex As Exception
-   '      Stop
-   '   End Try
-   'End Sub
 
 End Class
