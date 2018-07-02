@@ -24,7 +24,11 @@ Public Class Form1
          _cancelationtoken = Nothing
          _cancelationtoken = _tokenSource.Token
 
-         clsAsync.RunWithCancelation(lblOk, 5, _cancelationtoken, $"wird geladen {Now.ToLongTimeString}")
+         'clsAsync.RunWithCancelation(lblOk, 5, _cancelationtoken, $"wird geladen {Now.ToLongTimeString}")
+
+         Dim i As Integer = clsAsync.RunWithCancelation(lblOk, AddressOf Test3, $"wird geladen {Now.ToLongTimeString}").Result
+         lblOk.Text = i.ToString
+
       Catch ex As Exception
          Stop
       End Try

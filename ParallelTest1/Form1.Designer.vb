@@ -43,7 +43,7 @@ Partial Class Form1
       '
       Me.lblOk.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-      Appearance1.BackColor = System.Drawing.Color.Blue
+      Appearance1.BackColor = System.Drawing.Color.LightBlue
       Appearance1.FontData.BoldAsString = "True"
       Appearance1.FontData.SizeInPoints = 12.0!
       Appearance1.TextHAlignAsString = "Center"
@@ -53,7 +53,7 @@ Partial Class Form1
       Me.lblOk.Name = "lblOk"
       Me.lblOk.Size = New System.Drawing.Size(691, 387)
       Me.lblOk.TabIndex = 1
-      Me.lblOk.Text = "mainControl"
+      Me.lblOk.Text = "in Ruhe"
       '
       'btnCancel
       '

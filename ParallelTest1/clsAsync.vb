@@ -2,6 +2,8 @@
 
 Public Class clsAsync
 
+   Public Delegate Function T3(i As Integer) As Integer
+
    Public Shared Async Sub Run(mainControl As Control, Aktion As Action, Optional waittext As String = Nothing)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
       Try
@@ -21,10 +23,55 @@ Public Class clsAsync
          Stop
       End Try
    End Sub
-   Public Shared Async Sub RunWithCancelation(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
-                                              Optional waitText As String = Nothing)
+   'Public Shared Async Sub RunWithCancelation(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
+   '                                           Optional waitText As String = Nothing)
+   '   ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
+   '   '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
+   '   Try
+   '      Dim sc As SynchronizationContext = SynchronizationContext.Current
+
+   '      ' waitControl einrichten
+   '      Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
+
+   '      ' Task starten
+   '      Await Task.Run(Sub() Test4(Anzahl, cancelationtoken)).ConfigureAwait(False)
+
+   '      ' Aufräumen
+   '      sc.Post(New SendOrPostCallback(Sub()
+   '                                        fertig(mainControl, waitControl)
+   '                                     End Sub), Nothing)
+
+   '   Catch ex As Exception
+   '      Stop
+   '   End Try
+   'End Sub
+   'Public Shared Async Function RunWithCancelation(mainControl As Control,  Optional waitText As String = Nothing) As Task(Of Integer)
+   '   ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
+   '   '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
+   '   Dim i As Integer = 0
+   '   Try
+   '      Dim sc As SynchronizationContext = SynchronizationContext.Current
+
+   '      ' waitControl einrichten
+   '      Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
+
+   '      ' Task starten
+   '      i = Await Task.FromResult(Of Integer)(Test3(5))
+
+   '      ' Aufräumen
+   '      sc.Post(New SendOrPostCallback(Sub()
+   '                                        fertig(mainControl, waitControl)
+   '                                     End Sub), Nothing)
+
+   '   Catch ex As Exception
+   '      Stop
+   '   End Try
+   '   Return i
+   'End Function
+   Public Shared Async Function RunWithCancelation(mainControl As Control, Aktion As T3, Optional waitText As String = Nothing) As Task(Of Object)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
       '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
+      Dim i As Integer = 0
       Try
          Dim sc As SynchronizationContext = SynchronizationContext.Current
 
@@ -32,7 +79,11 @@ Public Class clsAsync
          Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
 
          ' Task starten
-         Await Task.Run(Sub() Test4(Anzahl, cancelationtoken)).ConfigureAwait(False)
+         'T = Await Aktion(5)
+         i = Await Task.FromResult(Of Object)(Aktion.Invoke(5))
+         'Dim i As Integer = Aktion.Invoke(5)
+
+         ' Aufräumen
          sc.Post(New SendOrPostCallback(Sub()
                                            fertig(mainControl, waitControl)
                                         End Sub), Nothing)
@@ -40,7 +91,8 @@ Public Class clsAsync
       Catch ex As Exception
          Stop
       End Try
-   End Sub
+      Return i
+   End Function
    Public Shared Async Sub RunWithCancelationAndReturn(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
                                                             Optional waittext As String = Nothing)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
