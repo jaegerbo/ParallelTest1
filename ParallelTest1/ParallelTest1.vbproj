@@ -79,7 +79,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="allgemeine Deklarationen.vb" />
+    <Compile Include="Aufgabe\clsAufgabenErgebnis.vb" />
+    <Compile Include="Aufgabe\clsAufgabenManager.vb" />
     <Compile Include="clsAsync.vb" />
+    <Compile Include="Aufgabe\clsAufgabe.vb" />
+    <Compile Include="Aufgabe\clsAufgabeListe.vb" />
     <Compile Include="clsRunUiAsync2.vb" />
     <Compile Include="Form1.vb">
       <SubType>Form</SubType>
