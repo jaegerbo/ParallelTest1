@@ -8,7 +8,7 @@
       _Aufgabenliste = New clsAufgabeListe
    End Sub
 
-   Public Shared Function getAufgabenManager()
+   Public Shared Function getAufgabenManager() As clsAufgabenManager
       If __AufgabenManager Is Nothing Then
          __AufgabenManager = New clsAufgabenManager
       End If
