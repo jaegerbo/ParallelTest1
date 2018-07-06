@@ -68,12 +68,25 @@ Public Class Form1
 
    Private Sub btnStart3_Click(sender As Object, e As EventArgs) Handles btnStart3.Click
       Try
-         _tokenSource.Cancel()
-         _cancelationtoken = _tokenSource.Token
+         Debug.WriteLine($"Start3 gestartet um {Now.ToLongTimeString}")
 
-         _Task = clsAsync.RunTest5(lblOk, 4000000, _tokenSource.Token, True)
+         ' langen Prozess starten
+         Dim Parameterliste As New Hashtable
+         Parameterliste.Add("Anzahl", 5)
+         Parameterliste.Add("mainControl", lblOk)
+         Parameterliste.Add("waitControlText", $"wird geladen {Now.ToLongTimeString}")
+
+         Dim Ergebnis As clsAufgabenErgebnis = __AufgabenManager.starteAufgabe(AddressOf Test6, Parameterliste).Result
+         Debug.WriteLine($"Start3 hat Aufgabe gestartet um {Now.ToLongTimeString}")
+         lblOk.Invoke(Sub()
+                         If Ergebnis.abgebrochen = False Then
+                            lblOk.Text = CInt(Ergebnis.WertObjekt).ToString
+                         End If
+                      End Sub)
       Catch ex As Exception
          Stop
+      Finally
+         Debug.WriteLine($"Start3 beendet um {Now.ToLongTimeString}")
       End Try
    End Sub
    Private Sub btnStart4_Click(sender As Object, e As EventArgs) Handles btnStart4.Click
@@ -98,7 +111,6 @@ Public Class Form1
       Catch ex As Exception
          Stop
       End Try
-      Debug.WriteLine($"Start4 beendet um {Now.ToLongTimeString}")
    End Sub
 
    Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click

@@ -75,7 +75,7 @@
    Public Function Test6(Parameterliste As Hashtable) As clsAufgabenErgebnis
       Dim Ergebnis As New clsAufgabenErgebnis
       Try
-         Debug.WriteLine($"Test6 gestartet um {Now.ToLongTimeString}")
+         Debug.WriteLine($"Test6 gestartet um {Now.ToLongTimeString}  TaskId = {Task.CurrentId}")
 
          ' Anzahl ermitteln
          Dim Anzahl As Integer = 0

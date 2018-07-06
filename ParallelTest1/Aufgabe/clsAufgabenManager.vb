@@ -18,8 +18,10 @@
    Public Async Function starteAufgabe(aufzurufendeFunktion As AufgabenDelegate, Parameterliste As Hashtable) As Task(Of clsAufgabenErgebnis)
       Dim Ergebnis As clsAufgabenErgebnis = Nothing
       Try
+
          Dim Aufgabe As clsAufgabe
          Dim Name As String = aufzurufendeFunktion.Method.Name
+         Debug.WriteLine($"Aufgabe {Name} gestartet. Aufgabenliste hat {_Aufgabenliste.Count.ToString} Elemente. TaskId = {Task.CurrentId}")
 
          ' prüfen, ob ein waitControl angezeigt werden soll
          Dim mainControl As Control = loadParameter("mainControl", Parameterliste)
@@ -46,13 +48,18 @@
          _Aufgabenliste.Add(Name, Aufgabe)
 
          ' und starten
+         Debug.WriteLine($"Await für Aufgabe {Name} gestartet. TaskId = {Task.CurrentId}")
          Ergebnis = Await Task.FromResult(Of Object)(aufzurufendeFunktion.Invoke(Parameterliste))
+         Debug.WriteLine($"Await für Aufgabe {Name} beendet. TaskId = {Task.CurrentId}")
          If Ergebnis.abgebrochen = False Then
             waitControlEntfernen(mainControl, waitControl)
+            _Aufgabenliste.Remove(Name)
          End If
 
+         Debug.WriteLine($"Aufgabe {Name} beendet. TaskId = {Task.CurrentId}")
       Catch ex As Exception
          Stop
+      Finally
       End Try
       Return Ergebnis
    End Function
