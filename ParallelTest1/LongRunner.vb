@@ -72,5 +72,48 @@
       End Try
       Return i
    End Function
+   Public Function Test6(Parameterliste As Hashtable) As clsAufgabenErgebnis
+      Dim Ergebnis As New clsAufgabenErgebnis
+      Try
+         Debug.WriteLine($"Test6 gestartet um {Now.ToLongTimeString}")
+
+         ' Anzahl ermitteln
+         Dim Anzahl As Integer = 0
+         If Parameterliste.ContainsKey("Anzahl") Then
+            Anzahl = CInt(Parameterliste.Item("Anzahl"))
+         End If
+
+         ' Cancelationtoken ermitteln
+         Dim cancelationtokenSource As Threading.CancellationTokenSource = Nothing
+         If Parameterliste.ContainsKey("cancelationtokenSource") Then
+            cancelationtokenSource = CType(Parameterliste.Item("cancelationtokenSource"), Threading.CancellationTokenSource)
+         End If
+
+         ' Aufgabe durchführen
+         Dim i As Integer
+         For i = 0 To Anzahl - 1
+            Threading.Thread.Sleep(1000)
+
+            ' prüfen, ob abgebrochen werden soll
+            If cancelationtokenSource.IsCancellationRequested Then
+               Debug.WriteLine($"Test6 abgebrochen um {Now.ToLongTimeString} mit i = {i.ToString }")
+               Ergebnis.abgebrochen = True
+               Exit For
+            End If
+
+            Application.DoEvents()
+         Next
+
+         ' Erfolgreich beenden
+         Ergebnis.OK = True
+         Ergebnis.WertObjekt = i
+
+         Debug.WriteLine($"Test6 beendet um {Now.ToLongTimeString} mit i = {i.ToString }")
+      Catch ex As Exception
+         Stop
+         Ergebnis.Fehler = ex.Message
+      End Try
+      Return Ergebnis
+   End Function
 
 End Module

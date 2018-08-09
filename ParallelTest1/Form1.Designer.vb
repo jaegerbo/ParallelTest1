@@ -29,6 +29,7 @@ Partial Class Form1
       Me.btnStart2 = New Infragistics.Win.Misc.UltraButton()
       Me.btnStart3 = New Infragistics.Win.Misc.UltraButton()
       Me.btnStart2MitReturn = New Infragistics.Win.Misc.UltraButton()
+      Me.btnStart4 = New Infragistics.Win.Misc.UltraButton()
       Me.SuspendLayout()
       '
       'btnStart1
@@ -87,11 +88,20 @@ Partial Class Form1
       Me.btnStart2MitReturn.TabIndex = 5
       Me.btnStart2MitReturn.Text = "Start 2 (abbrechbar mit Return)"
       '
+      'btnStart4
+      '
+      Me.btnStart4.Location = New System.Drawing.Point(27, 371)
+      Me.btnStart4.Name = "btnStart4"
+      Me.btnStart4.Size = New System.Drawing.Size(191, 49)
+      Me.btnStart4.TabIndex = 6
+      Me.btnStart4.Text = "Start 4 (mit Aufgabemanager)"
+      '
       'Form1
       '
       Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
       Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
       Me.ClientSize = New System.Drawing.Size(1048, 568)
+      Me.Controls.Add(Me.btnStart4)
       Me.Controls.Add(Me.btnStart2MitReturn)
       Me.Controls.Add(Me.btnStart3)
       Me.Controls.Add(Me.btnStart2)
@@ -110,4 +120,5 @@ Partial Class Form1
    Friend WithEvents btnStart2 As Infragistics.Win.Misc.UltraButton
    Friend WithEvents btnStart3 As Infragistics.Win.Misc.UltraButton
    Friend WithEvents btnStart2MitReturn As Infragistics.Win.Misc.UltraButton
+   Friend WithEvents btnStart4 As Infragistics.Win.Misc.UltraButton
 End Class

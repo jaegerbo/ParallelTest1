@@ -2,7 +2,8 @@
 
 Public Class clsAsync
 
-   Public Delegate Function T3(i As Integer) As Integer
+   Public Delegate Function Test3Delegate(i As Integer) As Integer
+   Public Delegate Function Test4Delegate(i As Integer, cancelationtoken As CancellationToken) As Integer
 
    Public Shared Async Sub Run(mainControl As Control, Aktion As Action, Optional waittext As String = Nothing)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
@@ -68,25 +69,25 @@ Public Class clsAsync
    '   End Try
    '   Return i
    'End Function
-   Public Shared Async Function RunWithCancelation(mainControl As Control, Aktion As T3, Optional waitText As String = Nothing) As Task(Of Object)
+   Public Shared Async Function RunWithCancelation(mainControl As Control, Aktion As Test4Delegate, Anzahl As Integer, cancelationtoken As CancellationToken,
+                                                   Optional waitText As String = Nothing) As Task(Of Object)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
       '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
       Dim i As Integer = 0
       Try
-         Dim sc As SynchronizationContext = SynchronizationContext.Current
+         'Dim sc As SynchronizationContext = SynchronizationContext.Current
 
          ' waitControl einrichten
          Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
 
          ' Task starten
-         'T = Await Aktion(5)
-         i = Await Task.FromResult(Of Object)(Aktion.Invoke(5))
-         'Dim i As Integer = Aktion.Invoke(5)
+         i = Await Task.FromResult(Of Object)(Aktion.Invoke(Anzahl, cancelationtoken))
 
          ' Aufräumen
-         sc.Post(New SendOrPostCallback(Sub()
-                                           fertig(mainControl, waitControl)
-                                        End Sub), Nothing)
+         'sc.Post(New SendOrPostCallback(Sub()
+         '                                  fertig(mainControl, waitControl)
+         '                               End Sub), Nothing)
+         fertig(mainControl, waitControl)
 
       Catch ex As Exception
          Stop
@@ -139,7 +140,9 @@ Public Class clsAsync
       Try
          If waittext IsNot Nothing Then
 
-            mainControl.Visible = False
+            mainControl.Invoke(Sub()
+                                  mainControl.Visible = False
+                               End Sub)
             waitControl = New Label
             With waitControl
                .Top = mainControl.Top
@@ -155,7 +158,9 @@ Public Class clsAsync
                End If
 
             End With
-            mainControl.Parent.Controls.Add(waitControl)
+            mainControl.Invoke(Sub()
+                                  mainControl.Parent.Controls.Add(waitControl)
+                               End Sub)
             Application.DoEvents()
          End If
       Catch ex As Exception
@@ -166,10 +171,14 @@ Public Class clsAsync
    Private Shared Sub fertig(mainControl As Control, waitControl As Control)
       ' Zweck:    Wenn ein waitControl vorhanden war, wird es wieder entfernt
       Try
-         mainControl.Visible = True
+         mainControl.Invoke(Sub()
+                               mainControl.Visible = True
+                            End Sub)
          If waitControl IsNot Nothing Then
-            mainControl.Parent.Controls.Remove(waitControl)
-            waitControl.Dispose()
+            mainControl.Invoke(Sub()
+                                  mainControl.Parent.Controls.Remove(waitControl)
+                                  waitControl.Dispose()
+                               End Sub)
          End If
          Application.DoEvents()
       Catch ex As Exception

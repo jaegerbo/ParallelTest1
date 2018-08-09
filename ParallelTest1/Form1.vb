@@ -16,6 +16,22 @@ Public Class Form1
       End Try
    End Sub
 
+   'Private Sub btnStart2_Click(sender As Object, e As EventArgs) Handles btnStart2.Click
+   '   Try
+   '      Debug.WriteLine($"Start2 gestartet um {Now.ToLongTimeString}")
+   '      _tokenSource.Cancel()
+   '      _tokenSource = New CancellationTokenSource
+   '      _cancelationtoken = Nothing
+   '      _cancelationtoken = _tokenSource.Token
+
+   '      Dim i As Integer = clsAsync.RunWithCancelation(lblOk, AddressOf Test4, 5, _cancelationtoken, $"wird geladen {Now.ToLongTimeString}").Result
+   '      lblOk.Text = i.ToString
+
+   '   Catch ex As Exception
+   '      Stop
+   '   End Try
+   '   Debug.WriteLine($"Start2 beendet um {Now.ToLongTimeString}")
+   'End Sub
    Private Sub btnStart2_Click(sender As Object, e As EventArgs) Handles btnStart2.Click
       Try
          Debug.WriteLine($"Start2 gestartet um {Now.ToLongTimeString}")
@@ -24,10 +40,15 @@ Public Class Form1
          _cancelationtoken = Nothing
          _cancelationtoken = _tokenSource.Token
 
-         'clsAsync.RunWithCancelation(lblOk, 5, _cancelationtoken, $"wird geladen {Now.ToLongTimeString}")
-
-         Dim i As Integer = clsAsync.RunWithCancelation(lblOk, AddressOf Test3, $"wird geladen {Now.ToLongTimeString}").Result
-         lblOk.Text = i.ToString
+         Task.Run(Sub()
+                     Dim i As Integer = clsAsync.RunWithCancelation(lblOk, AddressOf Test4, 5, _cancelationtoken, $"wird geladen {Now.ToLongTimeString}").Result
+                     Application.DoEvents()
+                     lblOk.Invoke(Sub()
+                                     If _cancelationtoken.IsCancellationRequested = False Then
+                                        lblOk.Text = i.ToString
+                                     End If
+                                  End Sub)
+                  End Sub)
 
       Catch ex As Exception
          Stop
@@ -54,6 +75,30 @@ Public Class Form1
       Catch ex As Exception
          Stop
       End Try
+   End Sub
+   Private Sub btnStart4_Click(sender As Object, e As EventArgs) Handles btnStart4.Click
+      Try
+         Debug.WriteLine($"Start4 gestartet um {Now.ToLongTimeString}")
+
+         Task.Run(Sub()
+                     ' langen Prozess starten
+                     Dim Parameterliste As New Hashtable
+                     Parameterliste.Add("Anzahl", 5)
+                     Parameterliste.Add("mainControl", lblOk)
+                     Parameterliste.Add("waitControlText", $"wird geladen {Now.ToLongTimeString}")
+
+                     Dim Ergebnis As clsAufgabenErgebnis = __AufgabenManager.starteAufgabe(AddressOf Test6, Parameterliste).Result
+                     lblOk.Invoke(Sub()
+                                     If Ergebnis.abgebrochen = False Then
+                                        lblOk.Text = CInt(Ergebnis.WertObjekt).ToString
+                                     End If
+                                  End Sub)
+                  End Sub)
+
+      Catch ex As Exception
+         Stop
+      End Try
+      Debug.WriteLine($"Start4 beendet um {Now.ToLongTimeString}")
    End Sub
 
    Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
