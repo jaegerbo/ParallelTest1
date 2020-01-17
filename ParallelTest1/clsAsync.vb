@@ -75,18 +75,12 @@ Public Class clsAsync
       '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
       Dim i As Integer = 0
       Try
-         'Dim sc As SynchronizationContext = SynchronizationContext.Current
-
          ' waitControl einrichten
          Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
 
          ' Task starten
          i = Await Task.FromResult(Of Object)(Aktion.Invoke(Anzahl, cancelationtoken))
 
-         ' Aufräumen
-         'sc.Post(New SendOrPostCallback(Sub()
-         '                                  fertig(mainControl, waitControl)
-         '                               End Sub), Nothing)
          fertig(mainControl, waitControl)
 
       Catch ex As Exception
