@@ -3,7 +3,7 @@
 Public Class clsAsync
 
    Public Delegate Function Test3Delegate(i As Integer) As Integer
-   Public Delegate Function Test4Delegate(i As Integer, cancelationtoken As CancellationToken) As Integer
+   Public Delegate Function Test4Delegate(i As Integer, cancelationtoken As CancellationToken, Progress As IProgress(Of Integer)) As Integer
 
    Public Shared Async Sub Run(mainControl As Control, Aktion As Action, Optional waittext As String = Nothing)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
@@ -69,7 +69,7 @@ Public Class clsAsync
    '   End Try
    '   Return i
    'End Function
-   Public Shared Async Function RunWithCancelation(mainControl As Control, Aktion As Test4Delegate, Anzahl As Integer, cancelationtoken As CancellationToken,
+   Public Shared Async Function RunWithCancelationAsync(mainControl As Control, Aktion As Test4Delegate, Anzahl As Integer, cancelationtoken As CancellationToken,
                                                    Optional waitText As String = Nothing) As Task(Of Object)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
       '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
@@ -79,7 +79,7 @@ Public Class clsAsync
          Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
 
          ' Task starten
-         i = Await Task.FromResult(Of Object)(Aktion.Invoke(Anzahl, cancelationtoken))
+         i = Await Task.FromResult(Of Object)(Aktion.Invoke(Anzahl, cancelationtoken, Nothing))
 
          fertig(mainControl, waitControl)
 
@@ -88,8 +88,8 @@ Public Class clsAsync
       End Try
       Return i
    End Function
-   Public Shared Async Sub RunWithCancelationAndReturn(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
-                                                            Optional waittext As String = Nothing)
+   Public Shared Async Sub RunWithCancelationAndReturnAsync(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
+                                                            Optional waittext As String = Nothing, Optional Progress As IProgress(Of Integer) = Nothing)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
       '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
       Try
@@ -99,7 +99,7 @@ Public Class clsAsync
          Dim waitControl As Label = waitControlEinrichten(mainControl, waittext)
 
          ' Task starten
-         Dim i As Integer = Await Task.Run(Function() Test4(Anzahl, cancelationtoken)).ConfigureAwait(False)
+         Dim i As Integer = Await Task.Run(Function() Test4(Anzahl, cancelationtoken, Progress)).ConfigureAwait(False)
          sc.Post(New SendOrPostCallback(Sub()
                                            fertig(mainControl, waitControl)
                                            mainControl.Text = i.ToString

@@ -27,12 +27,13 @@ Partial Class Form1
         Me.btnStart1 = New Infragistics.Win.Misc.UltraButton()
         Me.lblOk = New Infragistics.Win.Misc.UltraLabel()
         Me.btnCancel = New Infragistics.Win.Misc.UltraButton()
-        Me.btnStart2 = New Infragistics.Win.Misc.UltraButton()
-        Me.btnStart3 = New Infragistics.Win.Misc.UltraButton()
         Me.btnStart2MitReturn = New Infragistics.Win.Misc.UltraButton()
         Me.btnStart4 = New Infragistics.Win.Misc.UltraButton()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.lblUhrzeit = New Infragistics.Win.Misc.UltraLabel()
+        Me.ProgressBar = New Infragistics.Win.UltraWinProgressBar.UltraProgressBar()
+        Me.lblStatus = New Infragistics.Win.Misc.UltraLabel()
+        Me.btnStartMitAwait = New Infragistics.Win.Misc.UltraButton()
         Me.SuspendLayout()
         '
         'btnStart1
@@ -41,7 +42,7 @@ Partial Class Form1
         Me.btnStart1.Name = "btnStart1"
         Me.btnStart1.Size = New System.Drawing.Size(191, 49)
         Me.btnStart1.TabIndex = 0
-        Me.btnStart1.Text = "Start"
+        Me.btnStart1.Text = "Start (normal)"
         '
         'lblOk
         '
@@ -67,25 +68,9 @@ Partial Class Form1
         Me.btnCancel.TabIndex = 2
         Me.btnCancel.Text = "abbrechen"
         '
-        'btnStart2
-        '
-        Me.btnStart2.Location = New System.Drawing.Point(27, 112)
-        Me.btnStart2.Name = "btnStart2"
-        Me.btnStart2.Size = New System.Drawing.Size(191, 49)
-        Me.btnStart2.TabIndex = 3
-        Me.btnStart2.Text = "Start 2 (abbrechbar)"
-        '
-        'btnStart3
-        '
-        Me.btnStart3.Location = New System.Drawing.Point(27, 282)
-        Me.btnStart3.Name = "btnStart3"
-        Me.btnStart3.Size = New System.Drawing.Size(191, 49)
-        Me.btnStart3.TabIndex = 4
-        Me.btnStart3.Text = "Start 3 (mit Zwischenstatus)"
-        '
         'btnStart2MitReturn
         '
-        Me.btnStart2MitReturn.Location = New System.Drawing.Point(27, 195)
+        Me.btnStart2MitReturn.Location = New System.Drawing.Point(28, 150)
         Me.btnStart2MitReturn.Name = "btnStart2MitReturn"
         Me.btnStart2MitReturn.Size = New System.Drawing.Size(191, 49)
         Me.btnStart2MitReturn.TabIndex = 5
@@ -110,18 +95,43 @@ Partial Class Form1
         Me.lblUhrzeit.Name = "lblUhrzeit"
         Me.lblUhrzeit.Size = New System.Drawing.Size(189, 22)
         Me.lblUhrzeit.TabIndex = 7
-        Me.lblUhrzeit.Text = "UltraLabel1"
+        Me.lblUhrzeit.Text = "Uhrzeit"
+        '
+        'ProgressBar
+        '
+        Me.ProgressBar.Location = New System.Drawing.Point(302, 428)
+        Me.ProgressBar.Name = "ProgressBar"
+        Me.ProgressBar.Size = New System.Drawing.Size(690, 41)
+        Me.ProgressBar.TabIndex = 8
+        Me.ProgressBar.Text = "[Formatted]"
+        '
+        'lblStatus
+        '
+        Me.lblStatus.Location = New System.Drawing.Point(302, 545)
+        Me.lblStatus.Name = "lblStatus"
+        Me.lblStatus.Size = New System.Drawing.Size(690, 22)
+        Me.lblStatus.TabIndex = 9
+        Me.lblStatus.Text = "Status"
+        '
+        'btnStartMitAwait
+        '
+        Me.btnStartMitAwait.Location = New System.Drawing.Point(27, 86)
+        Me.btnStartMitAwait.Name = "btnStartMitAwait"
+        Me.btnStartMitAwait.Size = New System.Drawing.Size(191, 49)
+        Me.btnStartMitAwait.TabIndex = 10
+        Me.btnStartMitAwait.Text = "Start (mit await)"
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1048, 568)
+        Me.Controls.Add(Me.btnStartMitAwait)
+        Me.Controls.Add(Me.lblStatus)
+        Me.Controls.Add(Me.ProgressBar)
         Me.Controls.Add(Me.lblUhrzeit)
         Me.Controls.Add(Me.btnStart4)
         Me.Controls.Add(Me.btnStart2MitReturn)
-        Me.Controls.Add(Me.btnStart3)
-        Me.Controls.Add(Me.btnStart2)
         Me.Controls.Add(Me.btnCancel)
         Me.Controls.Add(Me.lblOk)
         Me.Controls.Add(Me.btnStart1)
@@ -134,10 +144,11 @@ Partial Class Form1
     Friend WithEvents btnStart1 As Infragistics.Win.Misc.UltraButton
    Friend WithEvents lblOk As Infragistics.Win.Misc.UltraLabel
    Friend WithEvents btnCancel As Infragistics.Win.Misc.UltraButton
-   Friend WithEvents btnStart2 As Infragistics.Win.Misc.UltraButton
-   Friend WithEvents btnStart3 As Infragistics.Win.Misc.UltraButton
-   Friend WithEvents btnStart2MitReturn As Infragistics.Win.Misc.UltraButton
-   Friend WithEvents btnStart4 As Infragistics.Win.Misc.UltraButton
+    Friend WithEvents btnStart2MitReturn As Infragistics.Win.Misc.UltraButton
+    Friend WithEvents btnStart4 As Infragistics.Win.Misc.UltraButton
     Friend WithEvents Timer1 As Timer
     Friend WithEvents lblUhrzeit As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents ProgressBar As Infragistics.Win.UltraWinProgressBar.UltraProgressBar
+    Friend WithEvents lblStatus As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents btnStartMitAwait As Infragistics.Win.Misc.UltraButton
 End Class
