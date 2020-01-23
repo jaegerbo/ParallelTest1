@@ -1,4 +1,5 @@
 ﻿Imports System.Threading
+Imports System.Threading.Tasks
 
 Public Class clsAsync
 
@@ -24,70 +25,28 @@ Public Class clsAsync
          Stop
       End Try
    End Sub
-   'Public Shared Async Sub RunWithCancelation(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
-   '                                           Optional waitText As String = Nothing)
-   '   ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
-   '   '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
-   '   Try
-   '      Dim sc As SynchronizationContext = SynchronizationContext.Current
-
-   '      ' waitControl einrichten
-   '      Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
-
-   '      ' Task starten
-   '      Await Task.Run(Sub() Test4(Anzahl, cancelationtoken)).ConfigureAwait(False)
-
-   '      ' Aufräumen
-   '      sc.Post(New SendOrPostCallback(Sub()
-   '                                        fertig(mainControl, waitControl)
-   '                                     End Sub), Nothing)
-
-   '   Catch ex As Exception
-   '      Stop
-   '   End Try
-   'End Sub
-   'Public Shared Async Function RunWithCancelation(mainControl As Control,  Optional waitText As String = Nothing) As Task(Of Integer)
+   'Public Shared Async Function RunWithCancelationAsync(Routine As Func(Of Integer, CancellationToken, IProgress(Of Integer)),
+   '                                                     Optional mainControl As Control = Nothing,
+   '                                                     Optional waittext As String = Nothing) As Task(Of Integer)
    '   ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
    '   '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
    '   Dim i As Integer = 0
    '   Try
-   '      Dim sc As SynchronizationContext = SynchronizationContext.Current
-
    '      ' waitControl einrichten
-   '      Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
+   '      Dim waitControl As Label = waitControlEinrichten(mainControl, waittext)
 
    '      ' Task starten
-   '      i = Await Task.FromResult(Of Integer)(Test3(5))
+   '      Dim T As Task(Of Integer)
+   '      T = Await Task.Run(Of Integer)(Routine)
+   '      'i = Await Task.FromResult(Of Object)(Aktion.Invoke(Anzahl, cancelationtoken, Nothing))
 
-   '      ' Aufräumen
-   '      sc.Post(New SendOrPostCallback(Sub()
-   '                                        fertig(mainControl, waitControl)
-   '                                     End Sub), Nothing)
+   '      fertig(mainControl, waitControl)
 
    '   Catch ex As Exception
    '      Stop
    '   End Try
    '   Return i
    'End Function
-   Public Shared Async Function RunWithCancelationAsync(mainControl As Control, Aktion As Test4Delegate, Anzahl As Integer, cancelationtoken As CancellationToken,
-                                                   Optional waitText As String = Nothing) As Task(Of Object)
-      ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
-      '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
-      Dim i As Integer = 0
-      Try
-         ' waitControl einrichten
-         Dim waitControl As Label = waitControlEinrichten(mainControl, waitText)
-
-         ' Task starten
-         i = Await Task.FromResult(Of Object)(Aktion.Invoke(Anzahl, cancelationtoken, Nothing))
-
-         fertig(mainControl, waitControl)
-
-      Catch ex As Exception
-         Stop
-      End Try
-      Return i
-   End Function
    Public Shared Async Sub RunWithCancelationAndReturnAsync(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
                                                             Optional waittext As String = Nothing, Optional Progress As IProgress(Of Integer) = Nothing)
       ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
@@ -96,10 +55,17 @@ Public Class clsAsync
          Dim sc As SynchronizationContext = SynchronizationContext.Current
 
          ' waitControl einrichten
-         Dim waitControl As Label = waitControlEinrichten(mainControl, waittext)
+         Dim waitControl As Label = Nothing
+         If waittext IsNot Nothing Then
+            waitControl = waitControlEinrichten(mainControl, waittext)
+         End If
 
          ' Task starten
-         Dim i As Integer = Await Task.Run(Function() Test4(Anzahl, cancelationtoken, Progress)).ConfigureAwait(False)
+         Dim i As Integer = Await Task.Run(Function()
+                                              Return Test4(Anzahl, cancelationtoken, Progress)
+                                           End Function).ConfigureAwait(False)
+
+         ' waitControl wieder entfernen, und das mainControl mit den neuen Werten versehen
          sc.Post(New SendOrPostCallback(Sub()
                                            fertig(mainControl, waitControl)
                                            mainControl.Text = i.ToString
@@ -117,7 +83,9 @@ Public Class clsAsync
          Dim waitControl As Label = waitControlEinrichten(mainControl, waittext)
 
          ' Task starten
-         Dim i As Integer = Await Task.Run(Function() Test5(Anzahl, waitControl, sc, cancelationtoken))
+         Dim i As Integer = Await Task.Run(Function()
+                                              Return Test5(Anzahl, waitControl, sc, cancelationtoken)
+                                           End Function)
          sc.Post(New SendOrPostCallback(Sub()
                                            fertig(mainControl, waitControl)
                                            mainControl.Text = i.ToString
@@ -127,6 +95,82 @@ Public Class clsAsync
          Stop
       End Try
    End Function
+
+   Public Shared Async Function RunFunctionAsync(Routine As Func(Of Integer, CancellationToken, IProgress(Of Integer), Integer),
+                                                 Anzahl As Integer,
+                                                 cancelationtoken As Threading.CancellationToken,
+                                                 Progress As IProgress(Of Integer),
+                                                 mainControl As Control) As Task(Of Integer)
+      Try
+         'Dim sc As SynchronizationContext = SynchronizationContext.Current
+
+         ' waitControl einrichten
+         'Dim waitControl As Label = waitControlEinrichten(mainControl, "wird geladen")
+
+         ' Task starten
+         Dim T As Task(Of Integer) = Task.Run(Function()
+                                                 Return Routine(Anzahl, cancelationtoken, Progress)
+                                              End Function)
+         Dim i As Integer = Await T
+
+
+
+         'sc.Post(New SendOrPostCallback(Sub()
+         '                                  fertig(mainControl, waitControl)
+         '                                  mainControl.Text = i.ToString
+         '                               End Sub), Nothing)
+
+         Return i
+      Catch ex As Exception
+         Stop
+      End Try
+   End Function
+   Public Shared Async Function RunFunctionAsync2(Routine As Func(Of Task(Of Integer)),
+                                                  mainControl As Control) As Task(Of Integer)
+      Try
+         Dim sc As SynchronizationContext = SynchronizationContext.Current
+
+         ' waitControl einrichten
+         Dim waitControl As Label = waitControlEinrichten(mainControl, "wird geladen")
+
+         ' Task starten
+         Dim T As Task(Of Integer) = Task.Run(Routine)
+         Dim i As Integer = Await T
+
+
+
+         sc.Post(New SendOrPostCallback(Sub()
+                                           fertig(mainControl, waitControl)
+                                        End Sub), Nothing)
+
+         Return i
+      Catch ex As Exception
+         Stop
+      End Try
+   End Function
+   Public Shared Async Sub RunFunctionAsync3(Routine As Func(Of Task(Of Integer)),
+                                                  mainControl As Control)
+      Try
+         Dim sc As SynchronizationContext = SynchronizationContext.Current
+
+         ' waitControl einrichten
+         Dim waitControl As Label = waitControlEinrichten(mainControl, "wird geladen")
+
+         ' Task starten
+         Dim T As Task(Of Integer) = Task.Run(Routine)
+         Dim i As Integer = Await T
+
+
+
+         sc.Post(New SendOrPostCallback(Sub()
+                                           fertig(mainControl, waitControl)
+                                           mainControl.Text = i.ToString
+                                        End Sub), Nothing)
+
+      Catch ex As Exception
+         Stop
+      End Try
+   End Sub
 
    Private Shared Function waitControlEinrichten(mainControl As Control, waittext As String) As Control
       ' Zweck:    Wenn ein waitControl angezeigt werden soll, wird es hier erzeugt

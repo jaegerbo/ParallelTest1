@@ -34,6 +34,7 @@ Partial Class Form1
         Me.ProgressBar = New Infragistics.Win.UltraWinProgressBar.UltraProgressBar()
         Me.lblStatus = New Infragistics.Win.Misc.UltraLabel()
         Me.btnStartMitAwait = New Infragistics.Win.Misc.UltraButton()
+        Me.btnStart3 = New Infragistics.Win.Misc.UltraButton()
         Me.SuspendLayout()
         '
         'btnStart1
@@ -121,11 +122,20 @@ Partial Class Form1
         Me.btnStartMitAwait.TabIndex = 10
         Me.btnStartMitAwait.Text = "Start (mit await)"
         '
+        'btnStart3
+        '
+        Me.btnStart3.Location = New System.Drawing.Point(28, 254)
+        Me.btnStart3.Name = "btnStart3"
+        Me.btnStart3.Size = New System.Drawing.Size(191, 49)
+        Me.btnStart3.TabIndex = 11
+        Me.btnStart3.Text = "Start 3 (allgemeiner Aufruf)"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1048, 568)
+        Me.Controls.Add(Me.btnStart3)
         Me.Controls.Add(Me.btnStartMitAwait)
         Me.Controls.Add(Me.lblStatus)
         Me.Controls.Add(Me.ProgressBar)
@@ -151,4 +161,5 @@ Partial Class Form1
     Friend WithEvents ProgressBar As Infragistics.Win.UltraWinProgressBar.UltraProgressBar
     Friend WithEvents lblStatus As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents btnStartMitAwait As Infragistics.Win.Misc.UltraButton
+    Friend WithEvents btnStart3 As Infragistics.Win.Misc.UltraButton
 End Class
