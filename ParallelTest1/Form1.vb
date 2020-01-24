@@ -54,6 +54,11 @@ Public Class Form1
          _tokenSource = New CancellationTokenSource
 
          ' Prozess starten
+         'clsAsync.RunWithCancelationAndReturnAsync(lblOk, 5, _tokenSource.Token, "wird geladen",
+         '                                          New Progress(Of Integer)(Sub(result As Integer)
+         '                                                                      ProgressBar.Visible = True
+         '                                                                      ProgressBar.Value = result
+         '                                                                   End Sub))
          clsAsync.RunWithCancelationAndReturnAsync(lblOk, 5, _tokenSource.Token, "wird geladen",
                                                    New Progress(Of Integer)(Sub(result As Integer)
                                                                                ProgressBar.Visible = True
@@ -69,17 +74,26 @@ Public Class Form1
       Try
          Dim i As Integer
 
-         clsAsync.RunFunctionAsync3(Function()
-                                       Return Test4Async(5,
-                                                         _tokenSource.Token,
-                                                         New Progress(Of Integer)(Sub(result As Integer)
-                                                                                     ProgressBar.Visible = True
-                                                                                     ProgressBar.Value = result
-                                                                                  End Sub))
-                                    End Function,
-                                    lblOk)
+         'clsAsync.RunFunctionAsync3(Function()
+         '                              Return Test4Async(5,
+         '                                                _tokenSource.Token,
+         '                                                New Progress(Of Integer)(Sub(result As Integer)
+         '                                                                            ProgressBar.Visible = True
+         '                                                                            ProgressBar.Value = result
+         '                                                                         End Sub))
+         '                           End Function,
+         '                           lblOk)
+
+
+
+         Dim T As Task(Of Integer) = Test4Async(5, _tokenSource.Token, New Progress(Of Integer)(Sub(result As Integer)
+                                                                                                   ProgressBar.Visible = True
+                                                                                                   ProgressBar.Value = result
+                                                                                                End Sub))
+         T.Wait()
+         i = T.Result
          'i = Await T
-         'lblOk.Text = i.ToString
+         lblOk.Text = i.ToString
       Catch ex As Exception
          Stop
       End Try

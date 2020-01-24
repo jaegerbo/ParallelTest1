@@ -75,6 +75,31 @@ Public Class clsAsync
          Stop
       End Try
    End Sub
+   Public Shared Async Function RunWithCancelationAndReturnAsync(Of T)(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken,
+                                                            Optional waittext As String = Nothing, Optional Progress As IProgress(Of Integer) = Nothing) As Task(Of T)
+      ' Zweck:    Das gegebene mainControl mit der gegebenen Aktion füllen. Bei Bedarf kann eine Wartemeldung angezeigt werden.
+      '           Die Aktion kann abgebrochen werden und gibt einen Rückgabewert zurück.
+      Try
+         Dim sc As SynchronizationContext = SynchronizationContext.Current
+
+         ' waitControl einrichten
+         Dim waitControl As Label = waitControlEinrichten(mainControl, waittext)
+
+         ' Task starten
+         Dim i As Integer = Await Task.Run(Function()
+                                              Return Test4(Anzahl, cancelationtoken, Progress)
+                                           End Function).ConfigureAwait(False)
+
+         ' waitControl wieder entfernen, und das mainControl mit den neuen Werten versehen
+         sc.Post(New SendOrPostCallback(Sub()
+                                           fertig(mainControl, waitControl)
+                                           mainControl.Text = i.ToString
+                                        End Sub), Nothing)
+
+      Catch ex As Exception
+         Stop
+      End Try
+   End Function
    Public Shared Async Function RunTest5(mainControl As Control, Anzahl As Integer, cancelationtoken As CancellationToken, Optional waittext As String = Nothing) As Task
       Try
          Dim sc As SynchronizationContext = SynchronizationContext.Current
@@ -149,7 +174,7 @@ Public Class clsAsync
       End Try
    End Function
    Public Shared Async Sub RunFunctionAsync3(Routine As Func(Of Task(Of Integer)),
-                                                  mainControl As Control)
+                                             mainControl As Control)
       Try
          Dim sc As SynchronizationContext = SynchronizationContext.Current
 
@@ -159,8 +184,6 @@ Public Class clsAsync
          ' Task starten
          Dim T As Task(Of Integer) = Task.Run(Routine)
          Dim i As Integer = Await T
-
-
 
          sc.Post(New SendOrPostCallback(Sub()
                                            fertig(mainControl, waitControl)

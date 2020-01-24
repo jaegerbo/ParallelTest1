@@ -31,15 +31,11 @@
                          Progress As IProgress(Of Integer)) As Integer
       Dim i As Integer
       Try
-         Debug.WriteLine($"Test4 gestartet um {Now.ToLongTimeString}")
          For i = 0 To Anzahl - 1
             Threading.Thread.Sleep(1000)
 
             ' prüfen, ob abgebrochen werden soll
-            If cancelationtoken.IsCancellationRequested Then
-               Debug.WriteLine($"Test4 abgebrochen um {Now.ToLongTimeString} mit i = {i.ToString}")
-               Exit For
-            End If
+            If cancelationtoken.IsCancellationRequested Then Exit For
 
             ' Fortschritt dokumentieren
             If Progress IsNot Nothing Then
@@ -50,7 +46,6 @@
       Catch ex As Exception
          Stop
       End Try
-      Debug.WriteLine($"Test4 beendet um {Now.ToLongTimeString} mit i = {i.ToString}")
       Return i
    End Function
    Public Async Function Test4Async(Anzahl As Integer,
