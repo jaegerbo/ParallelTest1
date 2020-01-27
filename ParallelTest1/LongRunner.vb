@@ -1,34 +1,10 @@
-﻿Module LongRunner
+﻿Imports System.Threading
 
+Module LongRunner
 
-   Public Sub Test1(DauerInSekunden As Integer)
-      Try
-         Threading.Thread.Sleep(DauerInSekunden * 1000)
-         Application.DoEvents()
-      Catch ex As Exception
-         Stop
-      End Try
-   End Sub
-   Public Function Test3(Anzahl As Integer) As Integer
-      Dim i As Integer
-      Try
-         Debug.WriteLine($"Test4 gestartet um {Now.ToLongTimeString}")
-         For i = 0 To Anzahl - 1
-            Threading.Thread.Sleep(1000)
-
-            Application.DoEvents()
-         Next
-      Catch ex As Exception
-         Stop
-      End Try
-      Debug.WriteLine($"Test4 beendet um {Now.ToLongTimeString} mit i = {i.ToString }")
-      Return i
-   End Function
-
-
-   Public Function Test4(Anzahl As Integer,
-                         cancelationtoken As Threading.CancellationToken,
-                         Progress As IProgress(Of Integer)) As Integer
+   Public Function Test(Anzahl As Integer,
+                        cancelationtoken As Threading.CancellationToken,
+                        Progress As IProgress(Of Integer)) As Integer
       Dim i As Integer
       Try
          For i = 0 To Anzahl - 1
@@ -48,42 +24,30 @@
       End Try
       Return i
    End Function
-   Public Async Function Test4Async(Anzahl As Integer,
-                                    cancelationtoken As Threading.CancellationToken,
-                                    Progress As IProgress(Of Integer)) As Task(Of Integer)
-      Return Await Task.Run(Function()
-                               Return Test4(Anzahl, cancelationtoken, Progress)
-                            End Function)
-   End Function
+   Public Async Sub TestAsync(Anzahl As Integer,
+                               cancelationtoken As Threading.CancellationToken,
+                               Progress As IProgress(Of Integer),
+                               mainControl As Control,
+                               Optional waittext As String = Nothing)
 
+      Dim sc As SynchronizationContext = SynchronizationContext.Current
 
-   Public Function Test5(Anzahl As Integer, control As Control, sc As Threading.SynchronizationContext, cancelationtoken As Threading.CancellationToken) As Integer
+      ' waitControl einrichten
+      Dim waitControl As Label = clsAsync.waitControlEinrichten(mainControl, waittext)
+
       Dim i As Integer
-      Try
-         Dim timeNow As DateTime = DateTime.Now
+      i = Await Task.Run(Function()
+                            Return Test(Anzahl, cancelationtoken, Progress)
+                         End Function)
 
-         For i = 0 To Anzahl - 1
+      ' waitControl wieder entfernen, und das mainControl mit den neuen Werten versehen
+      sc.Post(New SendOrPostCallback(Sub()
+                                        clsAsync.waitControlEntfernen(mainControl, waitControl)
+                                        mainControl.Text = i.ToString
+                                     End Sub), Nothing)
+   End Sub
 
-            ' prüfen, ob abgebrochen werden soll
-            If cancelationtoken.IsCancellationRequested Then
-               Exit For
-            End If
 
-            ' alle 50 Millisekunden den Bildschirm aktualisieren
-            If (DateTime.Now - timeNow).Milliseconds >= 50 Then
-               sc.Post(New Threading.SendOrPostCallback(Sub()
-                                                           control.Text = i.ToString
-                                                        End Sub), Nothing)
-               timeNow = DateTime.Now
-            End If
-
-            Application.DoEvents()
-         Next
-      Catch ex As Exception
-         Stop
-      End Try
-      Return i
-   End Function
    Public Function Test6(Parameterliste As Hashtable) As clsAufgabenErgebnis
       Dim Ergebnis As New clsAufgabenErgebnis
       Try

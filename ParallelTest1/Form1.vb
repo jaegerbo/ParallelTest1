@@ -12,7 +12,7 @@ Public Class Form1
          lblOk.Text = "in Ruhe"
 
          ' Prozess starten
-         lblOk.Text = Test4(5, cancelationtoken:=Nothing, Progress:=Nothing).ToString
+         lblOk.Text = Test(5, cancelationtoken:=Nothing, Progress:=Nothing).ToString
       Catch ex As Exception
          Stop
       End Try
@@ -33,7 +33,7 @@ Public Class Form1
                                                      ProgressBar.Visible = True
                                                      ProgressBar.Value = result
                                                   End Sub)
-         Dim i As Integer = Await Task.Run(Function() Test4(Anzahl, cancelationtoken, Progress)).ConfigureAwait(continueOnCapturedContext:=True)
+         Dim i As Integer = Await Task.Run(Function() Test(Anzahl, cancelationtoken, Progress)).ConfigureAwait(continueOnCapturedContext:=True)
          lblOk.Text = i.ToString
          'sc.Post(New SendOrPostCallback(Sub()
          '                                  lblOk.Text = i.ToString
@@ -54,11 +54,6 @@ Public Class Form1
          _tokenSource = New CancellationTokenSource
 
          ' Prozess starten
-         'clsAsync.RunWithCancelationAndReturnAsync(lblOk, 5, _tokenSource.Token, "wird geladen",
-         '                                          New Progress(Of Integer)(Sub(result As Integer)
-         '                                                                      ProgressBar.Visible = True
-         '                                                                      ProgressBar.Value = result
-         '                                                                   End Sub))
          clsAsync.RunWithCancelationAndReturnAsync(lblOk, 5, _tokenSource.Token, "wird geladen",
                                                    New Progress(Of Integer)(Sub(result As Integer)
                                                                                ProgressBar.Visible = True
@@ -72,28 +67,18 @@ Public Class Form1
 
    Private Sub btnStart3_Click(sender As Object, e As EventArgs) Handles btnStart3.Click
       Try
-         Dim i As Integer
+         ' die folgende Lösung funktioniert
+         'clsAsync.RunFunctionAsync(AddressOf LongRunner.Test4, 5, _tokenSource.Token, New Progress(Of Integer)(Sub(result As Integer)
+         '                                                                                                         ProgressBar.Visible = True
+         '                                                                                                         ProgressBar.Value = result
+         '                                                                                                      End Sub),
+         '                          lblOk, "wird geladen")
 
-         'clsAsync.RunFunctionAsync3(Function()
-         '                              Return Test4Async(5,
-         '                                                _tokenSource.Token,
-         '                                                New Progress(Of Integer)(Sub(result As Integer)
-         '                                                                            ProgressBar.Visible = True
-         '                                                                            ProgressBar.Value = result
-         '                                                                         End Sub))
-         '                           End Function,
-         '                           lblOk)
-
-
-
-         Dim T As Task(Of Integer) = Test4Async(5, _tokenSource.Token, New Progress(Of Integer)(Sub(result As Integer)
-                                                                                                   ProgressBar.Visible = True
-                                                                                                   ProgressBar.Value = result
-                                                                                                End Sub))
-         T.Wait()
-         i = T.Result
-         'i = Await T
-         lblOk.Text = i.ToString
+         LongRunner.TestAsync(5, _tokenSource.Token, New Progress(Of Integer)(Sub(result As Integer)
+                                                                                 ProgressBar.Visible = True
+                                                                                 ProgressBar.Value = result
+                                                                              End Sub),
+                                   lblOk, "wird geladen")
       Catch ex As Exception
          Stop
       End Try
